@@ -161,6 +161,8 @@ Registers,Parameters and commands
 
 #define SI114X_ADDR 0X60
 
+//Offset of 256 explained in AN498
+#define ADC_OFFSET 0x100
 
 class SI114X {
  public:

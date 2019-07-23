@@ -182,9 +182,15 @@ uint8_t SI114X::WriteParamData(uint8_t Reg,uint8_t Value)
 Read Visible Value
 
  */
- uint16_t SI114X::ReadVisible(void)
+uint16_t SI114X::ReadVisible(void)
 {
-  return ReadHalfWord(SI114X_ALS_VIS_DATA0); 	
+  uint16_t val = ReadHalfWord(SI114X_ALS_VIS_DATA0);
+  if (val < ADC_OFFSET) {
+    val = 0;
+  } else {
+    val -= ADC_OFFSET;
+  }
+  return val; 	
 }
  /*--------------------------------------------------------//
 Read IR Value
@@ -192,7 +198,13 @@ Read IR Value
  */
  uint16_t SI114X::ReadIR(void)
 {
-  return ReadHalfWord(SI114X_ALS_IR_DATA0); 	
+  uint16_t val = ReadHalfWord(SI114X_ALS_IR_DATA0);
+  if (val < ADC_OFFSET) {
+    val = 0;
+  } else {
+    val -= ADC_OFFSET;
+  }
+  return val; 	
 } 
 /*--------------------------------------------------------//
 Read Proximity Value
