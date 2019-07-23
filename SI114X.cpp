@@ -29,7 +29,12 @@
  */
 
 #include "SI114X.h"
-#include "Wire.h"
+
+SI114X::SI114X(PinName sda, PinName scl): i2c(sda, scl)
+{
+  //Nothing to do
+}
+
 /*--------------------------------------------------------//
 default init
 
@@ -86,7 +91,6 @@ void SI114X::DeInit(void)
  */
 bool SI114X::Begin(void)
 {
-  Wire.begin();
   //
   //Init IIC  and reset si1145
   //
@@ -117,9 +121,9 @@ void SI114X::Reset(void)
   WriteByte(SI114X_IRQ_STATUS, 0xFF);
 
   WriteByte(SI114X_COMMAND, SI114X_RESET);
-  delay(10);
+  wait_ms(10);
   WriteByte(SI114X_HW_KEY, 0x17);
-  delay(10);
+  wait_ms(10);
 }
 /*--------------------------------------------------------//
 write one byte into si114x's reg
@@ -127,10 +131,8 @@ write one byte into si114x's reg
  */
 void SI114X::WriteByte(uint8_t Reg, uint8_t Value)
 {
-  Wire.beginTransmission(SI114X_ADDR); 
-  Wire.write(Reg); 
-  Wire.write(Value); 
-  Wire.endTransmission(); 
+    const char data[] = {Reg, Value};
+    i2c.write(SI114X_ADDR << 1, data, sizeof(data));
 }
 /*--------------------------------------------------------//
 read one byte data from si114x
@@ -138,11 +140,10 @@ read one byte data from si114x
  */
 uint8_t SI114X::ReadByte(uint8_t Reg)
 {
-    Wire.beginTransmission(SI114X_ADDR);
-    Wire.write(Reg);
-    Wire.endTransmission();
-    Wire.requestFrom(SI114X_ADDR, 1);  
-    return Wire.read();
+    char val = 0;
+    i2c.write(SI114X_ADDR << 1, (char *)&Reg, sizeof(Reg), true);
+    i2c.read(SI114X_ADDR << 1, &val, sizeof(val));
+    return (uint8_t)val;
 }
 /*--------------------------------------------------------//
 read half word(2 bytes) data from si114x
@@ -150,14 +151,10 @@ read half word(2 bytes) data from si114x
  */
 uint16_t SI114X::ReadHalfWord(uint8_t Reg)
 {
-  uint16_t Value;
-  Wire.beginTransmission(SI114X_ADDR);
-  Wire.write(Reg); 
-  Wire.endTransmission(); 
-  Wire.requestFrom(SI114X_ADDR, 2);
-  Value = Wire.read();
-  Value |= (uint16_t)Wire.read() << 8; 
-  return Value;
+    char buf[2] = {0, 0};
+    i2c.write(SI114X_ADDR << 1, (char *)&Reg, sizeof(Reg), true);
+    i2c.read(SI114X_ADDR << 1, buf, sizeof(buf));
+    return ((uint8_t)buf[0] << 0) | ((uint8_t)buf[1] << 8);
 }
 /*--------------------------------------------------------//
 read param data

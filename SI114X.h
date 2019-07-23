@@ -1,6 +1,6 @@
 #ifndef _SI114X_H_
 #define _SI114X_H_
-#include "Arduino.h"
+#include "mbed.h"
 /*------------------------------------------------------// 
 Registers,Parameters and commands
 
@@ -164,6 +164,7 @@ Registers,Parameters and commands
 
 class SI114X {
  public:
+  SI114X(PinName sda, PinName scl);
   bool Begin(void);
   void Reset(void);
   void DeInit(void);
@@ -174,6 +175,7 @@ class SI114X {
   uint16_t ReadProximity(uint8_t PSn);
   uint16_t ReadUV(void);
  private:
+  I2C i2c;
   void  WriteByte(uint8_t Reg, uint8_t Value);
   uint8_t  ReadByte(uint8_t Reg);
   uint16_t ReadHalfWord(uint8_t Reg);
