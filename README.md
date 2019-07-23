@@ -1,29 +1,29 @@
-# Grove_Sunlight_Sensor
+# Grove Sunlight Sensor
 
-<img src=https://statics3.seeedstudio.com/images/product/101020089%201.jpg width=300><img src=https://statics3.seeedstudio.com/product/101020089%201_01.jpg width=300>
+This library is used from controlling the Grove Sunlight sensor on mbed-os.
 
-[Grove - Sunlight Sensor](https://www.seeedstudio.com/Grove-Sunlight-Sensor-p-2530.html)
+## Example Usage
 
-Grove - Sunlight Sensor is a multi-channel digital light sensor, which has the ability to detect UV-light, visible light and infrared light.
+Example program showing how this library is used:
 
-This device is based on SI1145, a new sensor from SiLabs. The Si1145 is a low-power, reflectance-based, infrared proximity, UV index and ambient light sensor with I2C digital interface and programmable-event interrupt output. This device offers excellent performance under a wide dynamic range and a variety of light sources including direct sunlight.
+```C++
+#include "mbed.h"
+#include "SI114X.h"
 
-For more information please visit [wiki](http://wiki.seeedstudio.com/Grove-Sunlight_Sensor/).
+SI114X light_sensor(D14, D15);
 
-----
-
-This demo is licensed under [The MIT License](http://opensource.org/licenses/mit-license.php). Check LINCESE for more information.<br>
-
-Contributing to this software is warmly welcomed. You can do this basically by<br>
-[forking](https://help.github.com/articles/fork-a-repo), committing modifications and then [pulling requests](https://help.github.com/articles/using-pull-requests) (follow the links above<br>
-for operating guide). Adding change log and your contact into file header is encouraged.<br>
-Thanks for your contribution.
-
-Seeed Studio is an open hardware facilitation company based in Shenzhen, China. <br>
-Benefiting from local manufacture power and convenient global logistic system, <br>
-we integrate resources to serve new era of innovation. Seeed also works with <br>
-global distributors and partners to push open hardware movement.<br>
-
-
-
-[![Analytics](https://ga-beacon.appspot.com/UA-46589105-3/Grove_Sunlight_Sensor)](https://github.com/igrigorik/ga-beacon)
+// main() runs in its own thread in the OS
+int main()
+{
+    while (!light_sensor.Begin()) {
+        printf("Initializing light sensor\r\n");
+        wait(1);
+    }
+    while (true) {
+        printf("Visible: %i\r\n", light_sensor.ReadVisible());
+        printf("IR: %i\r\n", light_sensor.ReadIR());
+        printf("UV: %i\r\n", light_sensor.ReadUV());
+        wait(1);
+    }
+}
+```
